@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './supabase-client';
-
 import './App.css';
 
 function App() {
@@ -8,15 +7,15 @@ function App() {
   const [chargement, setChargement] = useState(true);
   const [nouveauNom, setNouveauNom] = useState('');
   const [nouveauCode, setNouveauCode] = useState('');
-  const [editingCours, setEditingCours] = useState(null);
+  const [editingCours, setEditingCours] = useState(null); // État pour l'édition
 
-  // ... (useEffect pour fetchCours est inchangé)
+  // Récupère les cours au chargement
   useEffect(() => {
+    // ... (code inchangé pour fetchCours)
     const fetchCours = async () => {
       try {
         setChargement(true);
         const { data, error } = await supabase.from('Cours').select('*');
-        //const { data, error } = await supabase.rpc('get_all_courses'); // Appel de la fonction RPC
         if (error) throw error;
         if (data) setListeCours(data);
       } catch (error) {
@@ -27,8 +26,8 @@ function App() {
     };
     fetchCours();
   }, []);
-
-  // ... (useEffect pour l'édition est inchangé)
+  
+  // Remplit le formulaire quand on entre en mode édition
   useEffect(() => {
     if (editingCours) {
       setNouveauNom(editingCours.nomCours);
@@ -39,12 +38,18 @@ function App() {
     }
   }, [editingCours]);
 
-  // ... (fonctions ajouterCours et mettreAJourCours inchangées)
+  // Fonction AJOUTER
   const ajouterCours = async (e) => {
+    // ... (code inchangé)
     e.preventDefault();
     try {
-      const { data, error } = await supabase.from('Cours').insert([{ nomCours: nouveauNom, codeCours: nouveauCode }]).select();
+      const { data, error } = await supabase
+        .from('Cours')
+        .insert([{ nomCours: nouveauNom, codeCours: nouveauCode }])
+        .select();
+
       if (error) throw error;
+      
       if (data) {
         setListeCours([...listeCours, data[0]]);
         setNouveauNom('');
@@ -55,13 +60,24 @@ function App() {
     }
   };
 
+  // Fonction METTRE À JOUR
   const mettreAJourCours = async (e) => {
     e.preventDefault();
     try {
-      const { data, error } = await supabase.from('Cours').update({ nomCours: nouveauNom, codeCours: nouveauCode }).eq('id', editingCours.id).select();
+      const { data, error } = await supabase
+        .from('Cours')
+        .update({ nomCours: nouveauNom, codeCours: nouveauCode })
+        .eq('id', editingCours.id)
+        .select();
+
       if (error) throw error;
+      
       if (data) {
-        setListeCours(listeCours.map((cours) => (cours.id === editingCours.id ? data[0] : cours)));
+        setListeCours(
+          listeCours.map((cours) =>
+            cours.id === editingCours.id ? data[0] : cours
+          )
+        );
       }
     } catch (error) {
       alert(error.message);
@@ -70,24 +86,10 @@ function App() {
     }
   };
 
-  // NOUVELLE FONCTION SUPPRIMER
-  const supprimerCours = async (id) => {
-    if (!window.confirm("Es-tu sûr de vouloir supprimer ce cours ?")) {
-      return;
-    }
-    try {
-      const { error } = await supabase.from('Cours').delete().eq('id', id);
-      if (error) throw error;
-      setListeCours(listeCours.filter((cours) => cours.id !== id));
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
   return (
     <div className="container">
       <h1>Liste des Cours</h1>
-      {/* Le formulaire est inchangé */}
+
       <form onSubmit={editingCours ? mettreAJourCours : ajouterCours}>
         <h2>{editingCours ? 'Modifier le cours' : 'Ajouter un nouveau cours'}</h2>
         <input
@@ -123,9 +125,6 @@ function App() {
               </span>
               <div>
                 <button onClick={() => setEditingCours(unCours)}>Modifier</button>
-                <button onClick={() => supprimerCours(unCours.id)} className="delete-button">
-                  Supprimer
-                </button>
               </div>
             </li>
           ))}

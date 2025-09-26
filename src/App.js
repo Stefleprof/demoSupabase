@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from './supabase-client';
 
 import './App.css';
+import MyComponent from './componants/MyComponent';
 
 function App() {
   const [listeCours, setListeCours] = useState([]);
@@ -85,12 +86,12 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <h1>Liste des Cours</h1>
-      {/* Le formulaire est inchangé */}
+    <div className="container" >
+      <p classNAme ="text-xl" >Liste des Cours</p>
+      
       <form onSubmit={editingCours ? mettreAJourCours : ajouterCours}>
         <h2>{editingCours ? 'Modifier le cours' : 'Ajouter un nouveau cours'}</h2>
-        <input
+        <input 
           type="text"
           placeholder="Nom du cours"
           value={nouveauNom}
@@ -120,6 +121,7 @@ function App() {
             <li key={unCours.id}>
               <span>
                 <strong>{unCours.nomCours}</strong> ({unCours.codeCours})
+              
               </span>
               <div>
                 <button onClick={() => setEditingCours(unCours)}>Modifier</button>
@@ -131,6 +133,11 @@ function App() {
           ))}
         </ul>
       )}
+      <div >
+        <p>Le composant est ici ...</p>
+        <MyComponent />
+      </div>
+      
     </div>
   );
 }

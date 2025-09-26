@@ -124,7 +124,7 @@ function App() {
               
               </span>
               <div>
-                <button onClick={() => setEditingCours(unCours)}>Modifier</button>
+                <button className='bg-black text-white font-bold py-1 px-4 rounded-lg hover:bg-gray-500 hover:text-black ' onClick={() => setEditingCours(unCours)}>Modifier</button>
                 <button onClick={() => supprimerCours(unCours.id)} className="delete-button">
                   Supprimer
                 </button>
@@ -133,7 +133,7 @@ function App() {
           ))}
         </ul>
       )}
-      <div >
+      <div className='flex items-center justify-center '>
         <p>Le composant est ici ...</p>
         <MyComponent />
       </div>
